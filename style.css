@@ -1,0 +1,30 @@
+.square {
+    width: 23.5px;
+    height: 20px;
+    background-color: black;
+    border: 1px solid white;
+    display: inline-flex;
+    margin: 1px;
+    color: limegreen;
+    font-size: 24px;
+    padding: 1px;
+    box-sizing: border-box;
+    padding-top: 8px;
+    padding-left: 5px;
+}
+.container{
+	width: 1058px;
+	height: 800px;
+	margin: 0 auto;
+	line-height: 0;
+	font-size: 0;
+}
+p{
+	margin: -10px;
+	padding: 0;
+}
+body{
+	background-color: black;
+	color: white;
+	text-align: center;
+}
