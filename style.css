@@ -5,10 +5,18 @@
     height: 18px;
     width: 18px;
 }
+.snake{
+    background-color: red;
+    border: 1px dotted lightgrey;
+    display: inline-block;
+    float: left;
+    height: 18px;
+    width: 18px;
+}
 .container{
 	border: darkblue 2px solid;
     width: 800px;
-    height: 600px;
+    height: 800px;
     margin: 0 auto;
     border-collapse: collapse;
     padding: 0px;

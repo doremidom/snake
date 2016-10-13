@@ -23,6 +23,7 @@ return grid;
 }
 
 function food_maker(grid){
+    //console.log('makin food!')
     var location = food_spot();
     grid[location[0]][location[1]] = 'X';
     return grid
@@ -97,8 +98,8 @@ function eat(coordinates, grid){
     //add to snake body
     //debugger;
     grow();
-    console.log('after grow')
-    console.log('snake coordinates:' + new_snake.position)
+    //console.log('after grow')
+    //console.log('snake coordinates:' + new_snake.position)
 
     grid = food_maker(grid);
 
@@ -138,13 +139,13 @@ function grow(){
     new_snake.size ++
     //console.log('after grow');
     //console.log(new_snake);
-    console.log('added to snake position from grow: ' + new_snake.position[(new_snake.position.length)-1]);
+    //console.log('added to snake position from grow: ' + new_snake.position[(new_snake.position.length)-1]);
 
 }
     
 
 function move(grid){ 
-    console.log('begin move')
+    //console.log('begin move')
     //console.log(new_snake)
     //moves the coordinate pairs of the snake
     var d = new_snake.direction;
@@ -167,16 +168,16 @@ function move(grid){
             break;
     }
 
-    console.log('snake coordinates: ' + new_snake.position)
+    //console.log('snake coordinates: ' + new_snake.position)
 
     clear_grid();
 
     if (valid_position(new_head)){
-        console.log('move valid')
-        console.log('snake coordinates:' + new_snake.position)
+        //console.log('move valid')
+        //console.log('snake coordinates:' + new_snake.position)
         
         if (food(new_head, grid)) {
-            console.log('beginning eating at ' + new_snake.position[0])
+            //console.log('beginning eating at ' + new_snake.position[0])
 
 
             grid = eat(new_head, grid);
@@ -184,13 +185,11 @@ function move(grid){
 
         }
         else {
-            var gone = new_snake.position.pop();
-            console.log('removed' + gone);
-            console.log('added to snake position' + new_head);
+            new_snake.position.pop();
             new_snake.position.unshift(new_head);
         }
         
-        console.log(new_snake.position)
+        //console.log(new_snake.position)
 
 
    
@@ -205,7 +204,18 @@ function move(grid){
 }
 
 function divAppend(content) {
-        $('div.container').append('<div class="square">'+ content + '</div>');       
+        switch(content) {
+            case 'square':
+            $('div.container').append('<div class="square"></div>');
+            break;
+            case 'snake':
+            $('div.container').append('<div class="snake"></div>');
+            break;
+            case 'food':
+            $('div.container').append('<div class="square">X</div>');
+            break;
+        }
+               
     }
 
 function Snake(position, direction, size) {
@@ -217,21 +227,19 @@ function Snake(position, direction, size) {
 
 function render(grid){
     //console.log('begin render')
-    var ss = 0;
     for(var r=0; r < grid_dimension; r++) {
         for(var sq=0; sq < grid_dimension; sq++){
             if ( grid[r][sq] == 's')
             {
-                divAppend('0');
-                ss++;
+                divAppend('snake');
                 //console.log([r, sq])
             }
             else if (grid[r][sq] == 'X'){
-                divAppend('X');
+                divAppend('food');
             }
             else{
                 //console.log([r, sq])
-                divAppend(' ');
+                divAppend('square');
             }
         }
 
