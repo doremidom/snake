@@ -1,13 +1,15 @@
 $(document).ready(function() {
-    
+
+// var grid_dimensions = [40, 40];
+var grid_dimension = 40;
 
 //creating the object that holds grid data
 function grid_maker(){   
     var grid = []
 
-for(var x=0; x < 40; x++){
+for(var x=0; x < grid_dimension; x++){
         var row = [];
-    for(var i=0; i < 40; i++){ 
+    for(var i=0; i < grid_dimension; i++){ 
         row.push(' ');
     };
     grid.push(row);
@@ -33,12 +35,23 @@ function snake_render(grid){
     var size = new_snake.size;
     var old_position = new_snake.position[0];
 
+
+    // clearing everything but food
+    for (var i=0; i<grid_dimension; i++) {
+        for (var j=0; j<grid_dimension; j++) {
+            if (grid[i][j] != 'X')
+                grid[i][j] = ' ';
+        }
+    }
+
+
     //replacing grids with s for snake body
     for(var b= 0; b <= size-1 ; b++){
         var s = new_snake.position;
         var position =  s[b];
+
         grid[position[0]][position[1]] = 's';
-        //console.log('adding an s at ' + position[0] + ', '+ position[1]);
+ 
     }
 
     var s = new_snake.position[0]
@@ -46,28 +59,6 @@ function snake_render(grid){
     var direction = new_snake.direction
 
     
-    switch(direction) {
-    case 'r':
-
-    grid[old_position[0]][old_position[1]-size] = ' ';
-    //console.log(new_snake.position);
-    break;
-    case 'l':
-    grid[old_position[0]][old_position[1]+size] = ' ';
-    //console.log(new_snake.position);
-    break;
-    case 'u':
-    grid[old_position[0]+size][old_position[1]] = ' ';
-    //console.log(new_snake.position);
-    break;
-    case 'd':
-    grid[old_position[0]-(size)][old_position[1]] = ' ';
-
-    //console.log(new_snake.position);
-    break;   
-            
-    }
-    //console.log('removing' + [old_position[0], (old_position[1]-size)])
     return grid;
     }
     
@@ -81,11 +72,12 @@ function food_spot(){
 
 function valid_position(coordinates){
     if ((coordinates[0] < 41 && coordinates[0] >= 0 ) && coordinates[1] < 41 && coordinates[1] >= 0 ){
+        if (game[coordinates[0]][coordinates[1]] == 's'){
+            return false;
+        } 
         return true;
     }
-    else{
-        false;
-    }
+    false;
 }
 
 function food(coordinates, grid){
@@ -97,28 +89,32 @@ function food(coordinates, grid){
 
 function eat(coordinates, grid){
     console.log('begin eat');
-    //remove the food
+    //console.log(new_snake)
+    
+    //remove the food from board
     grid[coordinates[0]][coordinates[1]] = ' ';
 
-    //add size to snake
-    new_snake.size ++
-
     //add to snake body
+    //debugger;
     grow();
+    console.log('after grow')
+    console.log('snake coordinates:' + new_snake.position)
 
     grid = food_maker(grid);
 
-    return snake_render(grid);
+    return grid;
+    // return snake_render(grid);
 }
 
 function grow(){
     //adds next coordinate pair to snake position
-    console.log('growing!')
+    //console.log('growing!')
+    //console.log(new_snake)
     var direction = new_snake.direction
     var snake_head = new_snake.position[0]
     var snake_x = snake_head[0]
     var snake_y = snake_head[1]
-    var size = new_snake.size-1
+    var size = new_snake.size
 
     switch(direction) {
         case 'r':
@@ -137,59 +133,74 @@ function grow(){
         //console.log(new_snake.position);
         break;
     }
-    //console.log('added to snake position: ' + new_snake.position[(new_snake.position.length)-1]);
+
+    //add size to snake
+    new_snake.size ++
+    //console.log('after grow');
+    //console.log(new_snake);
+    console.log('added to snake position from grow: ' + new_snake.position[(new_snake.position.length)-1]);
+
 }
     
 
 function move(grid){ 
-    //console.log('begin move')
+    console.log('begin move')
+    //console.log(new_snake)
     //moves the coordinate pairs of the snake
-    var d = new_snake.direction
-    var size = new_snake.size 
+    var d = new_snake.direction;
+    var size = new_snake.size;
+    var head = new_snake.position[0];
+    var new_head = 0; 
+
     switch(d) {
         case 'r':
-        for(var b=0; b < (size); b++){
-            new_snake.position[b][1] ++;    
-        }
-        //console.log('moving right' + new_snake.position[new_snake.position.length-1]);
-        //console.log(new_snake.position);
-        break;
+            new_head = [head[0], (head[1]+1)];
+            break;
         case 'l':
-        for(var b=0; b < (size); b++){
-        new_snake.position[b][1] --;}
-        //console.log(new_snake.position);
-        break;
+            new_head = [head[0], (head[1]-1)];
+            break;
         case 'u':
-        for(var b=0; b < (size); b++){
-        new_snake.position[b][0] --;}
-        //console.log(new_snake.position);
-        break;
+            new_head = [head[0]-1, head[1]];
+            break;
         case 'd':
-        for(var b=0; b < (size); b++){
-        new_snake.position[b][0] ++;}
-        //console.log(new_snake.position);
-        break;       
+            new_head = [head[0]+1, head[1]];
+            break;
     }
-    console.log(new_snake.position[0] + new_snake.position[1])
+
+    console.log('snake coordinates: ' + new_snake.position)
 
     clear_grid();
 
-    if (valid_position(new_snake.position[0])){
+    if (valid_position(new_head)){
+        console.log('move valid')
+        console.log('snake coordinates:' + new_snake.position)
         
-        if (food(new_snake.position[0], grid)) {
-            //console.log(grid)
-            console.log('eating at' + new_snake.position[0])
+        if (food(new_head, grid)) {
+            console.log('beginning eating at ' + new_snake.position[0])
 
-            grid = eat(new_snake.position[0], grid);
-            //console.log(grid)
+
+            grid = eat(new_head, grid);
+
+
         }
-        //console.log('rendering hello')
+        else {
+            var gone = new_snake.position.pop();
+            console.log('removed' + gone);
+            console.log('added to snake position' + new_head);
+            new_snake.position.unshift(new_head);
+        }
+        
+        console.log(new_snake.position)
+
+
+   
         var new_grid = snake_render(grid)
-        //console.log(new_grid)
+
         render(new_grid);
     }
     else {
         game_over();
+        render(grid);
     }
 }
 
@@ -204,16 +215,15 @@ function Snake(position, direction, size) {
 }
 
 
-
-
-
 function render(grid){
     //console.log('begin render')
-    for(var r=0; r < 40; r++) {
-        for(var sq=0; sq < 40; sq++){
+    var ss = 0;
+    for(var r=0; r < grid_dimension; r++) {
+        for(var sq=0; sq < grid_dimension; sq++){
             if ( grid[r][sq] == 's')
             {
                 divAppend('0');
+                ss++;
                 //console.log([r, sq])
             }
             else if (grid[r][sq] == 'X'){
@@ -226,6 +236,7 @@ function render(grid){
         }
 
     }
+    //console.log("rendered " + ss + " ss");
 }
 
 function clear_grid(){
@@ -271,7 +282,8 @@ $(document).keydown(function(e) {
 var new_snake = new Snake([20,20], 'r', 1);
 var game = grid_maker(); 
 render(game);
-
+//console.log('beginning game')
+//console.log(new_snake)
 var begin = setInterval(function(){move(game);}, 10);
 
 });

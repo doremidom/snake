@@ -12,7 +12,7 @@
     margin: 0 auto;
     border-collapse: collapse;
     padding: 0px;
-    clear: both;
+    overflow: auto;
 }
 body{
 	background-color: black;
